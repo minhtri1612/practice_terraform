@@ -11,34 +11,9 @@ resource "aws_iam_openid_connect_provider" "github" {
   thumbprint_list = ["ffffffffffffffffffffffffffffffffffffffff"]
 }
 
-locals {
-  # Wildcard: cover main, PR, environment, tags, v.v. (practice)
-  github_sub = "repo:${var.github_org_or_user}/${var.github_repo}:*"
-}
-
 resource "aws_iam_role" "github_actions" {
-  name = "github-actions-terraform"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Federated = aws_iam_openid_connect_provider.github.arn
-        }
-        Action = "sts:AssumeRoleWithWebIdentity"
-        Condition = {
-          StringEquals = {
-            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          }
-          StringLike = {
-            "token.actions.githubusercontent.com:sub" = local.github_sub
-          }
-        }
-      }
-    ]
-  })
+  name               = "github-actions-terraform"
+  assume_role_policy = data.aws_iam_policy_document.github_actions_trust.json
 
   tags = {
     Purpose   = "github-actions-terraform"
@@ -84,7 +59,6 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
         Effect   = "Allow"
         Action   = ["*"]
         Resource = ["*"]
-        # Restrict bằng Condition nếu muốn; practice giữ rộng để dễ học
       }
     ]
   })
