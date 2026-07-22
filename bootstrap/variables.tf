@@ -25,3 +25,13 @@ variable "github_repo" {
   type        = string
   default     = "practice_terraform"
 }
+
+variable "github_owner_id" {
+  description = "GitHub owner ID (numeric). Repo tạo sau 15/7/2026 dùng immutable sub claim."
+  type        = string
+}
+
+variable "github_repo_id" {
+  description = "GitHub repository ID (numeric). Repo tạo sau 15/7/2026 dùng immutable sub claim."
+  type        = string
+}
