@@ -1,0 +1,5 @@
+aws_region         = "ap-southeast-2"
+state_bucket_name  = "minhtri-practice-tfstate-2026"
+lock_table_name    = "terraform-state-lock"
+github_org_or_user = "minhtri1612"
+github_repo        = "practice_terraform"
