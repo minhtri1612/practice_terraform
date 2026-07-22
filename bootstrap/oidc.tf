@@ -12,9 +12,10 @@ resource "aws_iam_openid_connect_provider" "github" {
 }
 
 locals {
-  # Cho phép workflow trên branch main + mọi PR của repo này
+  # Job dùng `environment: production` → OIDC sub là environment:..., KHÔNG phải ref:refs/heads/main
   github_sub_main = "repo:${var.github_org_or_user}/${var.github_repo}:ref:refs/heads/main"
   github_sub_pr   = "repo:${var.github_org_or_user}/${var.github_repo}:pull_request"
+  github_sub_env  = "repo:${var.github_org_or_user}/${var.github_repo}:environment:production"
 }
 
 resource "aws_iam_role" "github_actions" {
@@ -37,6 +38,7 @@ resource "aws_iam_role" "github_actions" {
             "token.actions.githubusercontent.com:sub" = [
               local.github_sub_main,
               local.github_sub_pr,
+              local.github_sub_env,
             ]
           }
         }
